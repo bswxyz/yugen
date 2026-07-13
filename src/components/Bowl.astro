@@ -1,0 +1,171 @@
+---
+/*
+  The shime bowl — every ingredient is a named SVG layer.
+  index.astro's inline script toggles `.on` per selection;
+  CSS makes each layer land with the --ease-pop curve.
+  Default state (rice · karaage · ajitama) ships pre-assembled
+  so the bowl reads complete without JavaScript.
+*/
+---
+<svg viewBox="0 0 440 340" role="img" aria-labelledby="bowlTitle" id="bowlArt">
+  <title id="bowlTitle">A ceramic bowl that assembles from your choices — base, something from the grill, and toppings</title>
+
+  <!-- steam -->
+  <g class="steam" fill="none" stroke="var(--faint)" stroke-width="3" stroke-linecap="round" opacity=".8" aria-hidden="true">
+    <path d="M186 104 C 180 88 194 78 189 62 C 185 48 196 40 193 26" />
+    <path d="M226 100 C 232 84 219 74 225 58 C 230 44 220 36 224 20" />
+    <path d="M263 106 C 258 92 270 82 265 68 C 261 56 271 48 268 36" />
+  </g>
+
+  <!-- bowl interior (behind the food) -->
+  <ellipse cx="220" cy="172" rx="140" ry="30" fill="var(--bowl-2)" />
+
+  <!-- ===================== BASES ===================== -->
+  <g id="l-base-rice" class="layer on">
+    <path d="M100 168 C 118 116 322 116 340 168 C 298 184 142 184 100 168 Z" fill="#f2e9d2" />
+    <g stroke="#d8c9a4" stroke-width="2.2" stroke-linecap="round" fill="none">
+      <path d="M150 150 c 6 -4 12 -4 16 0" /><path d="M195 136 c 6 -4 12 -4 16 0" />
+      <path d="M245 140 c 6 -4 12 -4 16 0" /><path d="M290 154 c 6 -4 12 -4 16 0" />
+      <path d="M170 162 c 5 -3 10 -3 14 0" /><path d="M262 164 c 5 -3 10 -3 14 0" />
+      <path d="M218 156 c 5 -3 10 -3 14 0" />
+    </g>
+  </g>
+
+  <g id="l-base-udon" class="layer">
+    <path d="M104 168 C 124 126 316 126 336 168 C 296 182 144 182 104 168 Z" fill="#e6d8b2" opacity=".7" />
+    <g fill="none" stroke="#efe3c4" stroke-width="9" stroke-linecap="round">
+      <path d="M116 160 C 150 128 196 148 238 132" />
+      <path d="M150 168 C 200 134 250 158 312 138" />
+      <path d="M132 148 C 180 120 260 138 322 156" />
+      <path d="M182 170 C 230 148 280 166 326 150" />
+    </g>
+    <g fill="none" stroke="#d9c99e" stroke-width="2" stroke-linecap="round" opacity=".7">
+      <path d="M150 168 C 200 134 250 158 312 138" />
+      <path d="M132 148 C 180 120 260 138 322 156" />
+    </g>
+  </g>
+
+  <g id="l-base-soba" class="layer">
+    <path d="M104 168 C 124 128 316 128 336 168 C 296 182 144 182 104 168 Z" fill="#a89272" opacity=".55" />
+    <g fill="none" stroke="#b7a184" stroke-width="4.5" stroke-linecap="round">
+      <path d="M114 160 C 148 128 192 148 236 130" />
+      <path d="M144 168 C 196 132 248 158 314 136" />
+      <path d="M128 146 C 178 118 258 136 324 154" />
+      <path d="M178 170 C 228 146 282 164 328 148" />
+      <path d="M160 156 C 210 128 268 148 318 142" />
+    </g>
+  </g>
+
+  <!-- ===================== PROTEINS ===================== -->
+  <g id="l-prot-karaage" class="layer on">
+    <g stroke="#96591b" stroke-width="2" stroke-linejoin="round">
+      <path d="M146 130 l 22 -16 26 6 8 20 -16 14 -30 -4 z" fill="#c47a2e" />
+      <path d="M212 112 l 24 -12 24 10 2 20 -20 10 -26 -8 z" fill="#cd8434" />
+      <path d="M272 128 l 18 -14 24 6 6 18 -14 12 -28 -2 z" fill="#c07428" />
+    </g>
+    <g fill="none" stroke="#8a4f16" stroke-width="1.6" stroke-linecap="round" opacity=".8">
+      <path d="M158 124 c 6 4 14 4 20 0" /><path d="M224 110 c 6 4 14 4 20 0" />
+      <path d="M282 124 c 5 4 12 4 17 0" />
+    </g>
+  </g>
+
+  <g id="l-prot-salmon" class="layer">
+    <path d="M168 110 L 288 116 C 300 118 302 132 292 138 L 176 144 C 160 140 156 116 168 110 Z"
+      fill="#e8875b" stroke="#c05a30" stroke-width="2" />
+    <g fill="none" stroke="#f6c4a4" stroke-width="2.6" stroke-linecap="round">
+      <path d="M196 114 C 192 124 194 132 200 140" />
+      <path d="M228 114 C 224 124 226 132 232 140" />
+      <path d="M258 116 C 254 126 256 132 262 138" />
+    </g>
+    <path d="M170 112 L 286 118" stroke="#7c4426" stroke-width="3" stroke-linecap="round" opacity=".7" />
+  </g>
+
+  <g id="l-prot-chashu" class="layer">
+    <circle cx="186" cy="128" r="26" fill="#caa27b" stroke="#8d5a33" stroke-width="2.5" />
+    <path d="M186 128 m -14 0 a 14 14 0 1 1 14 14" fill="none" stroke="#a06b3f" stroke-width="3" stroke-linecap="round" />
+    <circle cx="260" cy="120" r="23" fill="#d2ab84" stroke="#8d5a33" stroke-width="2.5" />
+    <path d="M260 120 m -12 0 a 12 12 0 1 1 12 12" fill="none" stroke="#a06b3f" stroke-width="3" stroke-linecap="round" />
+    <path d="M164 118 a 26 26 0 0 1 20 -15" fill="none" stroke="#ecd9bd" stroke-width="3.5" stroke-linecap="round" />
+  </g>
+
+  <g id="l-prot-tofu" class="layer">
+    <rect x="164" y="108" width="54" height="38" rx="7" fill="#f6efdc" stroke="#d8cab0" stroke-width="2" />
+    <rect x="234" y="116" width="50" height="34" rx="7" fill="#f3ebd6" stroke="#d8cab0" stroke-width="2" />
+    <g fill="#3a2f23">
+      <circle cx="182" cy="118" r="1.6" /><circle cx="198" cy="124" r="1.6" /><circle cx="208" cy="114" r="1.6" />
+      <circle cx="250" cy="126" r="1.6" /><circle cx="268" cy="132" r="1.6" /><circle cx="262" cy="122" r="1.6" />
+    </g>
+  </g>
+
+  <!-- ===================== TOPPINGS ===================== -->
+  <g id="l-top-egg" class="layer on">
+    <ellipse cx="308" cy="130" rx="25" ry="19" transform="rotate(-12 308 130)"
+      fill="#f4ead8" stroke="#d9c194" stroke-width="2" />
+    <path d="M288 118 a 25 19 0 0 1 26 -6" fill="none" stroke="#caa25c" stroke-width="3" stroke-linecap="round" opacity=".8" />
+    <circle cx="308" cy="131" r="9.5" fill="#e39a2d" />
+    <circle cx="306" cy="129" r="4.5" fill="#c17714" />
+  </g>
+
+  <g id="l-top-negi" class="layer">
+    <g fill="#7fae5e" stroke="#55823c" stroke-width="1.6">
+      <circle cx="150" cy="118" r="4.5" /><circle cx="200" cy="104" r="4.5" /><circle cx="238" cy="112" r="4" />
+      <circle cx="270" cy="104" r="4.5" /><circle cx="300" cy="116" r="4" /><circle cx="176" cy="108" r="4" />
+      <circle cx="222" cy="120" r="4.5" />
+    </g>
+  </g>
+
+  <g id="l-top-nori" class="layer">
+    <path d="M100 96 l 38 -8 6 54 -40 10 z" fill="#232d1e" stroke="#172014" stroke-width="2" />
+    <path d="M120 100 l 34 -6 4 48 -34 8 z" fill="#2c3826" stroke="#172014" stroke-width="2" />
+    <path d="M110 100 l 22 -5" stroke="#3c4a33" stroke-width="2.4" stroke-linecap="round" fill="none" />
+  </g>
+
+  <g id="l-top-kimchi" class="layer">
+    <g stroke="#a13418" stroke-width="1.8" stroke-linejoin="round">
+      <path d="M244 138 c 10 -10 24 -8 30 2 c -8 8 -24 10 -30 -2 z" fill="#cf4b28" />
+      <path d="M276 148 c 8 -10 22 -8 26 0 c -6 8 -20 10 -26 0 z" fill="#d85530" />
+      <path d="M230 150 c 8 -8 18 -6 22 0 c -6 6 -16 8 -22 0 z" fill="#c44322" />
+    </g>
+  </g>
+
+  <g id="l-top-menma" class="layer">
+    <g stroke="#a97f33" stroke-width="1.6">
+      <rect x="150" y="142" width="34" height="9" rx="4" transform="rotate(-14 167 146)" fill="#d3a852" />
+      <rect x="172" y="150" width="32" height="9" rx="4" transform="rotate(6 188 154)" fill="#dcb35e" />
+      <rect x="140" y="154" width="30" height="8" rx="4" transform="rotate(-4 155 158)" fill="#caa04c" />
+    </g>
+  </g>
+
+  <g id="l-top-goma" class="layer">
+    <g fill="#2e2a22">
+      <ellipse cx="168" cy="130" rx="2.4" ry="1.4" transform="rotate(24 168 130)" />
+      <ellipse cx="216" cy="140" rx="2.4" ry="1.4" transform="rotate(-30 216 140)" />
+      <ellipse cx="254" cy="128" rx="2.4" ry="1.4" transform="rotate(14 254 128)" />
+      <ellipse cx="286" cy="142" rx="2.4" ry="1.4" transform="rotate(-18 286 142)" />
+    </g>
+    <g fill="#f5efe2" stroke="#c9bfa4" stroke-width=".6">
+      <ellipse cx="192" cy="146" rx="2.4" ry="1.4" transform="rotate(-22 192 146)" />
+      <ellipse cx="238" cy="150" rx="2.4" ry="1.4" transform="rotate(30 238 150)" />
+      <ellipse cx="272" cy="118" rx="2.4" ry="1.4" transform="rotate(-8 272 118)" />
+    </g>
+  </g>
+
+  <!-- bowl front wall (covers the food below the rim) -->
+  <path d="M80 172 C 85 250 140 292 220 292 C 300 292 355 250 360 172
+           C 340 187 282 195 220 195 C 158 195 100 187 80 172 Z" fill="var(--bowl)" />
+  <!-- glaze band, brushed on -->
+  <path d="M96 210 C 152 232 288 232 344 210 L 336 240 C 282 258 158 258 104 240 Z"
+    fill="var(--indigo-deep)" opacity=".92" />
+  <path d="M110 214 C 160 230 200 234 244 234" fill="none" stroke="#f2ede2" stroke-width="2.4"
+    stroke-linecap="round" opacity=".25" />
+  <!-- rim + foot -->
+  <ellipse cx="220" cy="172" rx="140" ry="30" fill="none" stroke="#f2ede2" stroke-width="2" opacity=".22" />
+  <rect x="176" y="288" width="88" height="16" rx="5" fill="var(--bowl-2)" />
+  <ellipse cx="220" cy="306" rx="58" ry="9" fill="var(--bowl-2)" />
+
+  <!-- chopsticks resting on the rim -->
+  <g stroke-linecap="round" aria-hidden="true">
+    <path d="M318 152 L 432 100" stroke="#b98a5a" stroke-width="5" />
+    <path d="M326 162 L 436 116" stroke="#a97b4c" stroke-width="5" />
+  </g>
+</svg>

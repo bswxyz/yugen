@@ -1,0 +1,585 @@
+---
+import '../styles/global.css';
+import Bowl from '../components/Bowl.astro';
+import RoomScene from '../components/RoomScene.astro';
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+
+const title = 'Yugen — izakaya · small plates & sake, at the end of Katsu Alley';
+const description =
+  'Yugen is a fourteen-seat izakaya and sake bar. Charcoal kushiyaki, small plates that arrive when they are ready, and a shime bowl you build yourself. Push through the curtain.';
+
+const menu = [
+  {
+    jp: 'Kushiyaki', en: 'from the charcoal',
+    items: [
+      { name: 'Momo', desc: 'chicken thigh, tare, a pinch of sansho', price: '$5' },
+      { name: 'Negima', desc: 'chicken & charred negi, alternating', price: '$5.5' },
+      { name: 'Butabara', desc: 'pork belly, shio, yuzu-koshō on the side', price: '$6' },
+      { name: 'Shishito', desc: 'blistered, sea salt, katsuobushi snow', price: '$4.5' },
+      { name: 'Tsukune', desc: 'chicken meatball, egg-yolk tare for dipping', price: '$6.5' },
+    ],
+  },
+  {
+    jp: 'Otsumami', en: 'small plates',
+    items: [
+      { name: 'Agedashi tōfu', desc: 'dashi, ginger, grated daikon', price: '$7' },
+      { name: 'Karaage', desc: 'twice-fried, lemon, kewpie', price: '$9' },
+      { name: 'Hiyayakko', desc: 'cold silken tōfu, negi, katsuobushi', price: '$6' },
+      { name: 'Goma-ae', desc: 'spinach folded through black sesame', price: '$5.5' },
+      { name: 'Ika shioyaki', desc: 'grilled squid, shichimi butter', price: '$11' },
+    ],
+  },
+  {
+    jp: 'Shime', en: 'to finish',
+    items: [
+      { name: 'Ochazuke', desc: 'rice, dashi, umeboshi, poured sencha', price: '$8' },
+      { name: 'Yaki onigiri', desc: 'miso-brushed, crisped on the grill', price: '$5' },
+      { name: 'Tamago sando', desc: 'thick omelet, milk bread, off the clock', price: '$7' },
+      { name: 'Matcha pudding', desc: 'bitter on top, sweet underneath', price: '$6' },
+      { name: 'Hōjicha ice', desc: 'roasted tea, black sugar syrup', price: '$5.5' },
+    ],
+  },
+];
+
+const bases = [
+  { id: 'rice', name: 'White rice', meta: '$6 · 520 kcal', price: 6, kcal: 520, layer: 'l-base-rice', checked: true },
+  { id: 'udon', name: 'Udon', meta: '$7 · 480 kcal', price: 7, kcal: 480, layer: 'l-base-udon', checked: false },
+  { id: 'soba', name: 'Soba', meta: '$7 · 430 kcal', price: 7, kcal: 430, layer: 'l-base-soba', checked: false },
+];
+const proteins = [
+  { id: 'karaage', name: 'Karaage', meta: '+$6 · 310 kcal', price: 6, kcal: 310, layer: 'l-prot-karaage', checked: true },
+  { id: 'salmon', name: 'Miso salmon', meta: '+$8 · 280 kcal', price: 8, kcal: 280, layer: 'l-prot-salmon', checked: false },
+  { id: 'chashu', name: 'Pork chashu', meta: '+$7 · 390 kcal', price: 7, kcal: 390, layer: 'l-prot-chashu', checked: false },
+  { id: 'tofu', name: 'Sesame tōfu', meta: '+$5 · 220 kcal', price: 5, kcal: 220, layer: 'l-prot-tofu', checked: false },
+];
+const toppings = [
+  { id: 'egg', name: 'Ajitama', meta: '+$2 · 90 kcal', price: 2, kcal: 90, layer: 'l-top-egg', checked: true },
+  { id: 'negi', name: 'Negi', meta: '+$1 · 10 kcal', price: 1, kcal: 10, layer: 'l-top-negi', checked: false },
+  { id: 'nori', name: 'Nori', meta: '+$1 · 15 kcal', price: 1, kcal: 15, layer: 'l-top-nori', checked: false },
+  { id: 'kimchi', name: 'Kimchi', meta: '+$2 · 35 kcal', price: 2, kcal: 35, layer: 'l-top-kimchi', checked: false },
+  { id: 'menma', name: 'Menma', meta: '+$1.5 · 25 kcal', price: 1.5, kcal: 25, layer: 'l-top-menma', checked: false },
+  { id: 'goma', name: 'Toasted sesame', meta: '+$0.5 · 20 kcal', price: 0.5, kcal: 20, layer: 'l-top-goma', checked: false },
+];
+
+const scenes = [
+  { kind: 'alley', label: 'Ink-line drawing of a narrow alley doorway with a three-panel indigo noren curtain, a glowing paper lantern, a wooden sign board, and the house cat waiting outside', caption: 'THE DOOR ON KATSU ALLEY — LOOK FOR THE LANTERN, NOT A SIGN.' },
+  { kind: 'counter', label: 'Ink-line drawing of the counter: a charcoal konro grill with skewers and glowing embers, a pendant lamp, and a sake flask with two cups', caption: 'FOURTEEN SEATS. THE GRILL DOES MOST OF THE TALKING.' },
+  { kind: 'lanterns', label: 'Ink-line drawing of three paper lanterns hanging at different heights, the middle one carrying the house crest', caption: 'LANTERN ROW — LIT AT FIVE, OUT AT MIDNIGHT.' },
+  { kind: 'shelf', label: 'Ink-line drawing of the sake shelf: large bottles with paper labels, stacked masu boxes, hanging wooden tags, cups, and a small daruma', caption: 'THE SHELF — JUNMAI LEFT, HONJŌZŌ RIGHT, THE GOOD STUFF BEHIND KENJI.' },
+];
+
+const hours = [
+  { day: 'Monday', time: 'closed — the grill rests', dayIdx: 1 },
+  { day: 'Tuesday', time: '17:00 – 23:00', dayIdx: 2 },
+  { day: 'Wednesday', time: '17:00 – 23:00', dayIdx: 3 },
+  { day: 'Thursday', time: '17:00 – 23:00', dayIdx: 4 },
+  { day: 'Friday', time: '17:00 – 24:00', dayIdx: 5 },
+  { day: 'Saturday', time: '17:00 – 24:00', dayIdx: 6 },
+  { day: 'Sunday', time: '17:00 – 22:00', dayIdx: 0 },
+];
+---
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script is:inline>
+  document.documentElement.classList.add('js');
+  try { var t = localStorage.getItem('yugen-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="theme-color" content="#14100e" />
+<meta name="color-scheme" content="dark light" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<link rel="icon" href={`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 3 q9 4 9 11 q0 8 -9 11 q-9 -3 -9 -11 q0 -7 9 -11 Z' fill='%23e0592e'/%3E%3Cpath d='M6 10 q8 -3 16 0 M5.4 18 q8.6 3 17.2 0' fill='none' stroke='%2314100e' stroke-width='1.4' opacity='.55'/%3E%3C/svg%3E`} />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Karla:ital,wght@0,300..800;1,400..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+<div class="washi" aria-hidden="true"></div>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- shared defs for the noren fabric -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="norenGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="var(--noren-2)" />
+      <stop offset=".55" stop-color="var(--noren-1)" />
+      <stop offset="1" stop-color="var(--noren-3)" />
+    </linearGradient>
+    <pattern id="norenWeave" width="7" height="7" patternUnits="userSpaceOnUse">
+      <path d="M1 0 V7 M4.5 0 V7" stroke="rgba(242,237,226,.05)" stroke-width="1" />
+      <path d="M0 3.5 H7" stroke="rgba(0,0,0,.08)" stroke-width="1" />
+    </pattern>
+  </defs>
+</svg>
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href={base} aria-label="Yugen home">
+      <svg class="brand-mark" viewBox="0 0 28 28" aria-hidden="true" focusable="false">
+        <path d="M14 3 q9 4 9 11 q0 8 -9 11 q-9 -3 -9 -11 q0 -7 9 -11 Z" fill="currentColor" />
+        <path d="M6 10 q8 -3 16 0 M5.4 18 q8.6 3 17.2 0" fill="none" stroke="var(--bg)" stroke-width="1.4" opacity=".55" />
+      </svg>
+      <span>Yugen</span>
+      <span class="brand-jp" aria-hidden="true">幽玄</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#menu">The menu</a>
+      <a href="#bowl">The bowl</a>
+      <a href="#room">The room</a>
+      <a href="#hours">Hours</a>
+      <a href={`${base}guide/`}>Guide</a>
+      <a class="nav-cta" href="#hours">Hold seats</a>
+      <button id="themeBtn" class="theme-btn" type="button" aria-pressed="true" aria-label="Switch to light mode" title="Toggle light / dark">
+        <svg class="ico-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><g stroke-linecap="round"><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></g></svg>
+        <svg class="ico-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============ HERO — through the noren ============ -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="noren" id="noren" aria-hidden="true">
+      <div class="noren-rod"></div>
+      <div class="panel p1" data-depth="0.26" data-part="-1.4">
+        <div class="panel-open"><div class="panel-cloth">
+          <svg viewBox="0 0 300 560" preserveAspectRatio="none">
+            <path d="M0 0 H300 V536 C262 528 240 542 212 536 C180 529 158 544 128 538 C96 531 62 544 34 537 C22 534 10 538 0 534 Z" fill="url(#norenGrad)" />
+            <path d="M0 0 H300 V536 C262 528 240 542 212 536 C180 529 158 544 128 538 C96 531 62 544 34 537 C22 534 10 538 0 534 Z" fill="url(#norenWeave)" />
+            <path d="M0 8 H300" stroke="rgba(0,0,0,.4)" stroke-width="14" opacity=".3" />
+            <path d="M8 522 C 70 530 120 518 180 526 C 230 532 268 522 294 526" fill="none" stroke="rgba(242,237,226,.3)" stroke-width="2" stroke-dasharray="7 8" />
+          </svg>
+          <span class="panel-word" aria-hidden="true">YŪGEN</span>
+        </div></div>
+      </div>
+      <div class="panel p2" data-depth="0.2" data-part="-0.6">
+        <div class="panel-open"><div class="panel-cloth">
+          <svg viewBox="0 0 300 560" preserveAspectRatio="none">
+            <path d="M0 0 H300 V532 C270 540 236 528 204 536 C170 543 140 530 108 537 C74 544 40 530 0 538 Z" fill="url(#norenGrad)" />
+            <path d="M0 0 H300 V532 C270 540 236 528 204 536 C170 543 140 530 108 537 C74 544 40 530 0 538 Z" fill="url(#norenWeave)" />
+            <path d="M0 8 H300" stroke="rgba(0,0,0,.4)" stroke-width="14" opacity=".3" />
+            <path d="M6 524 C 60 516 130 530 188 522 C 240 516 272 528 296 522" fill="none" stroke="rgba(242,237,226,.3)" stroke-width="2" stroke-dasharray="7 8" />
+          </svg>
+          <!-- left half of the mon — meets its other half across the centre seam -->
+          <svg class="panel-mon mon-right" viewBox="0 0 80 150" aria-hidden="true">
+            <path d="M76 10 C 22 24 14 122 74 142" fill="none" stroke="#f2ede2" stroke-width="6" stroke-linecap="round" opacity=".9" />
+            <path d="M40 118 q 20 8 38 2" fill="none" stroke="#f2ede2" stroke-width="4" stroke-linecap="round" opacity=".55" />
+          </svg>
+        </div></div>
+      </div>
+      <div class="panel p3" data-depth="0.22" data-part="0.6">
+        <div class="panel-open"><div class="panel-cloth">
+          <svg viewBox="0 0 300 560" preserveAspectRatio="none">
+            <path d="M0 0 H300 V538 C264 530 232 544 198 537 C164 530 130 544 96 537 C64 531 30 542 0 534 Z" fill="url(#norenGrad)" />
+            <path d="M0 0 H300 V538 C264 530 232 544 198 537 C164 530 130 544 96 537 C64 531 30 542 0 534 Z" fill="url(#norenWeave)" />
+            <path d="M0 8 H300" stroke="rgba(0,0,0,.4)" stroke-width="14" opacity=".3" />
+            <path d="M4 526 C 66 532 128 520 190 528 C 240 534 272 524 296 528" fill="none" stroke="rgba(242,237,226,.3)" stroke-width="2" stroke-dasharray="7 8" />
+          </svg>
+          <!-- right half of the mon -->
+          <svg class="panel-mon mon-left" viewBox="0 0 80 150" aria-hidden="true">
+            <path d="M4 10 C 58 24 66 122 6 142" fill="none" stroke="#f2ede2" stroke-width="6" stroke-linecap="round" opacity=".9" />
+            <path d="M2 120 q 20 6 38 0" fill="none" stroke="#f2ede2" stroke-width="4" stroke-linecap="round" opacity=".55" />
+          </svg>
+        </div></div>
+      </div>
+      <div class="panel p4" data-depth="0.16" data-part="1.4">
+        <div class="panel-open"><div class="panel-cloth">
+          <svg viewBox="0 0 300 560" preserveAspectRatio="none">
+            <path d="M0 0 H300 V534 C268 542 234 528 200 536 C166 543 132 528 98 536 C66 542 32 530 0 536 Z" fill="url(#norenGrad)" />
+            <path d="M0 0 H300 V534 C268 542 234 528 200 536 C166 543 132 528 98 536 C66 542 32 530 0 536 Z" fill="url(#norenWeave)" />
+            <path d="M0 8 H300" stroke="rgba(0,0,0,.4)" stroke-width="14" opacity=".3" />
+            <path d="M6 522 C 64 530 126 518 186 526 C 238 532 270 522 294 526" fill="none" stroke="rgba(242,237,226,.3)" stroke-width="2" stroke-dasharray="7 8" />
+          </svg>
+          <span class="panel-word panel-word-jp" aria-hidden="true">小皿と酒</span>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="hero-inner wrap">
+      <p class="eyebrow">[ 幽玄 · yū-gen — the beauty that hides ]</p>
+      <h1 id="hero-title" class="hero-title">
+        <span class="line"><span>Small plates,</span></span>
+        <span class="line"><span>long nights,</span></span>
+        <span class="line"><span><em>lantern-light.</em></span></span>
+      </h1>
+      <p class="hero-sub">Yugen is a fourteen-seat izakaya at the end of Katsu Alley — charcoal
+        skewers, cold sake, and plates that arrive when they're ready, not when they're due.
+        Push through the curtain. The counter keeps a seat warm.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#menu">See the menu</a>
+        <a class="btn btn-ghost" href="#bowl">Build your bowl →</a>
+      </div>
+      <dl class="hero-facts">
+        <div><dt>Plates</dt><dd><span class="c-num" data-to="38">0</span></dd></div>
+        <div><dt>Sake by the glass</dt><dd><span class="c-num" data-to="21">0</span></dd></div>
+        <div><dt>Seats at the counter</dt><dd><span class="c-num" data-to="14">0</span></dd></div>
+      </dl>
+      <p class="hero-scroll mono" aria-hidden="true">scroll — step through the curtain</p>
+    </div>
+  </section>
+
+  <!-- ============ THE MENU ============ -->
+  <section id="menu" class="menu">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker reveal">[ The menu ]</p>
+        <h2 class="reveal">Order in threes. Share everything.</h2>
+        <p class="lede reveal">Plates land as the grill decides, not as courses. Start with three
+          per person, then wave for more — nobody keeps count, least of all the kitchen.</p>
+      </div>
+      <div class="menu-grid">
+        {menu.map((group, gi) => (
+          <div class="menu-group reveal" style={`--d:${gi * 0.1}s`}>
+            <h3 class="menu-cat">{group.jp} <small>{group.en}</small></h3>
+            <ul>
+              {group.items.map((it) => (
+                <li class="dish">
+                  <div class="dish-line">
+                    <span class="dish-name">{it.name}</span>
+                    <span class="dish-dots" aria-hidden="true"></span>
+                    <span class="dish-price">{it.price}</span>
+                  </div>
+                  <p class="dish-desc">{it.desc}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p class="menu-note reveal"><span class="mono">A NOTE ON SAKE —</span> the list lives on paper,
+        chalked and re-chalked as bottles come and go. Ask for the cedar board; if Kenji likes you,
+        ask what's behind him.</p>
+    </div>
+  </section>
+
+  <!-- ============ THE BOWL BUILDER ============ -->
+  <section id="bowl" class="builder">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker reveal">[ Shime — the finisher ]</p>
+        <h2 class="reveal">End the night with a bowl of your own making.</h2>
+        <p class="lede reveal">Shime is the bowl that closes an evening. Pick a base, something from
+          the grill, pile it high — the counter builds it while you finish your last pour.</p>
+      </div>
+      <div class="builder-grid">
+        <div class="builder-fig reveal">
+          <div class="bowl-stage">
+            <Bowl />
+          </div>
+          <p class="bowl-total" aria-live="polite">
+            <span class="bowl-summary" id="bowlSummary">white rice · karaage · ajitama</span>
+            <span class="bowl-price" id="bowlPrice">$14.00</span>
+            <span class="bowl-kcal" id="bowlKcal">920 kcal</span>
+          </p>
+        </div>
+        <form class="builder-form reveal" id="bowlForm" style="--d:.12s">
+          <fieldset>
+            <legend>01 — the base</legend>
+            <div class="opt-row">
+              {bases.map((o) => (
+                <label class="opt">
+                  <input type="radio" name="base" value={o.id} data-price={o.price} data-kcal={o.kcal}
+                    data-layer={o.layer} data-name={o.name.toLowerCase()} checked={o.checked} />
+                  <span class="opt-card"><span class="opt-name">{o.name}</span><span class="opt-meta">{o.meta}</span></span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>02 — from the grill</legend>
+            <div class="opt-row">
+              {proteins.map((o) => (
+                <label class="opt">
+                  <input type="radio" name="protein" value={o.id} data-price={o.price} data-kcal={o.kcal}
+                    data-layer={o.layer} data-name={o.name.toLowerCase()} checked={o.checked} />
+                  <span class="opt-card"><span class="opt-name">{o.name}</span><span class="opt-meta">{o.meta}</span></span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>03 — pile it on</legend>
+            <div class="opt-row">
+              {toppings.map((o) => (
+                <label class="opt">
+                  <input type="checkbox" name="topping" value={o.id} data-price={o.price} data-kcal={o.kcal}
+                    data-layer={o.layer} data-name={o.name.toLowerCase()} checked={o.checked} />
+                  <span class="opt-card"><span class="opt-name">{o.name}</span><span class="opt-meta">{o.meta}</span></span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <p class="builder-fine">The bowl on the left rebuilds as you choose. At the counter, say
+            "shime, my way" and read this off your phone.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE ROOM ============ -->
+  <section id="room" class="room">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker reveal">[ The room ]</p>
+        <h2 class="reveal">Fourteen seats and no clock on the wall.</h2>
+        <p class="lede reveal">One counter of old hinoki, a shelf of bottles that outnumbers the
+          seats, and light that comes from paper, not bulbs you can see. The room is drawn here the
+          way it feels — in ink, a little dim, cat included.</p>
+      </div>
+      <div class="room-grid">
+        {scenes.map((s, i) => (
+          <figure class="scene reveal" style={`--d:${(i % 2) * 0.12}s`}>
+            <div class="scene-art">
+              <RoomScene kind={s.kind} label={s.label} />
+            </div>
+            <figcaption class="mono">{s.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOURS + RESERVE ============ -->
+  <section id="hours" class="hours">
+    <div class="wrap hours-grid">
+      <div class="hours-info">
+        <p class="kicker reveal">[ Hours &amp; the door ]</p>
+        <h2 class="reveal">Lit at five. Out at midnight.</h2>
+        <p class="open-now reveal mono" id="openNow">
+          <span class="open-dot" aria-hidden="true"></span>
+          <span id="openText">Evenings from five · closed Mondays</span>
+        </p>
+        <table class="hours-table reveal">
+          <caption>Service, weekly</caption>
+          <tbody>
+            {hours.map((h) => (
+              <tr data-day={h.dayIdx}>
+                <th scope="row">{h.day}</th>
+                <td>{h.time}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p class="hours-addr reveal">
+          <span>4-2 Katsu Alley · behind the bicycle shop</span>
+          <span>Last orders 30 min before close</span>
+          <span>No reservations after 20:00 — just come</span>
+        </p>
+      </div>
+      <div class="reserve reveal" aria-live="polite">
+        <h3>Hold a couple of seats</h3>
+        <p class="reserve-sub">For four or fewer, before eight. Larger than that, the counter can't
+          hold you — but the standing barrels outside are first-come.</p>
+        <form id="resForm" novalidate>
+          <div class="field">
+            <label for="rName">Name</label>
+            <input id="rName" name="name" type="text" required autocomplete="name" placeholder="Your name" />
+          </div>
+          <div class="field">
+            <label for="rEmail">Email</label>
+            <input id="rEmail" name="email" type="email" required autocomplete="email" placeholder="you@example.com" />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="rGuests">Seats</label>
+              <select id="rGuests" name="guests">
+                <option>1</option><option selected>2</option><option>3</option><option>4</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="rDate">Evening</label>
+              <input id="rDate" name="date" type="date" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="rNote">Anything we should know?</label>
+            <textarea id="rNote" name="note" rows="2" placeholder="A birthday / no squid / seats near the grill…"></textarea>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Ask for the seats</button>
+          <p class="reserve-fine" id="resFine">Demo form — nothing is sent. For a real table, a phone rings at the counter between heats.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap foot-top">
+    <span class="foot-brand">
+      <svg viewBox="0 0 28 28" aria-hidden="true" focusable="false">
+        <path d="M14 3 q9 4 9 11 q0 8 -9 11 q-9 -3 -9 -11 q0 -7 9 -11 Z" fill="currentColor" />
+      </svg>
+      Yugen
+    </span>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="#menu">The menu</a><a href="#bowl">The bowl</a><a href="#room">The room</a><a href="#hours">Hours</a><a href={`${base}guide/`}>Guide</a>
+    </nav>
+  </div>
+  <div class="wrap foot-bottom">
+    <span>© 2026 Yugen — a design-showcase concept, not a real izakaya. The alley, the sake list and Kenji are fiction.</span>
+    <span>Designed &amp; built by Parable · <a href={`${base}guide/`}>How this was built →</a></span>
+  </div>
+</footer>
+
+<script is:inline>
+(() => {
+  'use strict';
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const root = document.documentElement;
+
+  /* ---------- theme toggle ---------- */
+  const themeBtn = document.getElementById('themeBtn');
+  const syncTheme = () => {
+    const dark = root.dataset.theme !== 'light';
+    themeBtn.setAttribute('aria-pressed', String(dark));
+    themeBtn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#14100e' : '#f2ede2');
+  };
+  if (themeBtn) {
+    syncTheme();
+    themeBtn.addEventListener('click', () => {
+      root.dataset.theme = root.dataset.theme === 'light' ? 'dark' : 'light';
+      try { localStorage.setItem('yugen-theme', root.dataset.theme); } catch (e) {}
+      syncTheme();
+    });
+  }
+
+  /* ---------- hero intro: the curtain parts ---------- */
+  const hero = document.querySelector('.hero');
+  requestAnimationFrame(() => requestAnimationFrame(() => hero && hero.classList.add('loaded')));
+
+  /* ---------- noren parallax — walking through the doorway ---------- */
+  const noren = document.getElementById('noren');
+  const panels = noren ? Array.from(noren.querySelectorAll('.panel')) : [];
+  if (panels.length && !reduce) {
+    let ticking = false;
+    const drift = () => {
+      ticking = false;
+      const heroH = hero ? hero.offsetHeight : innerHeight;
+      const y = clamp(scrollY, 0, heroH);
+      for (const p of panels) {
+        const depth = +p.dataset.depth;      // how deep in the doorway this panel hangs
+        const part = +p.dataset.part;        // negative parts left, positive parts right
+        const tx = part * y * 0.24;
+        const ty = -y * depth;
+        const rot = part * Math.min(y * 0.005, 2);
+        p.style.transform = 'translate3d(' + tx.toFixed(1) + 'px,' + ty.toFixed(1) + 'px,0) rotate(' + rot.toFixed(2) + 'deg)';
+      }
+      noren.style.opacity = String(1 - (y / heroH) * 0.55);
+    };
+    addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(drift); }
+    }, { passive: true });
+    addEventListener('resize', drift);
+    drift();
+  }
+
+  /* ---------- reveals ---------- */
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+    }
+  }, { threshold: 0.14, rootMargin: '0px 0px -6% 0px' });
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+  /* ---------- counters ---------- */
+  const cio = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const el = e.target, to = parseFloat(el.dataset.to);
+      cio.unobserve(el);
+      if (reduce) { el.textContent = String(to); continue; }
+      const dur = 1500, t0 = performance.now();
+      const tick = (t) => {
+        const p = clamp((t - t0) / dur, 0, 1);
+        el.textContent = String(Math.round(to * (1 - Math.pow(1 - p, 3))));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+  }, { threshold: 0.6 });
+  document.querySelectorAll('.c-num').forEach((el) => cio.observe(el));
+
+  /* ---------- the shime bowl builder ---------- */
+  const bowlForm = document.getElementById('bowlForm');
+  if (bowlForm) {
+    const priceEl = document.getElementById('bowlPrice');
+    const kcalEl = document.getElementById('bowlKcal');
+    const sumEl = document.getElementById('bowlSummary');
+    const build = () => {
+      let total = 0, kcal = 0;
+      const names = [];
+      bowlForm.querySelectorAll('input').forEach((inp) => {
+        const layer = document.getElementById(inp.dataset.layer);
+        if (inp.checked) {
+          total += +inp.dataset.price;
+          kcal += +inp.dataset.kcal;
+          names.push(inp.dataset.name);
+          if (layer) layer.classList.add('on');
+        } else if (layer) {
+          layer.classList.remove('on');
+        }
+      });
+      priceEl.textContent = '$' + total.toFixed(2);
+      kcalEl.textContent = Math.round(kcal) + ' kcal';
+      sumEl.textContent = names.join(' · ');
+    };
+    bowlForm.addEventListener('change', build);
+    bowlForm.addEventListener('submit', (e) => e.preventDefault());
+    build();
+  }
+
+  /* ---------- open now? ---------- */
+  /* [open, close] per weekday, 24h; null = dark. Sun..Sat. Close of 24 = midnight. */
+  const week = [[17, 22], null, [17, 23], [17, 23], [17, 23], [17, 24], [17, 24]];
+  const openNow = document.getElementById('openNow');
+  const openText = document.getElementById('openText');
+  if (openNow && openText) {
+    const now = new Date();
+    const day = now.getDay();
+    const h = now.getHours() + now.getMinutes() / 60;
+    const today = week[day];
+    const fmt = (n) => (n === 24 ? 'midnight' : String(n) + ':00');
+    if (today && h >= today[0] && h < today[1]) {
+      openNow.classList.add('is-open');
+      openText.textContent = 'Open now — the lanterns are lit until ' + fmt(today[1]);
+    } else {
+      openNow.classList.add('is-closed');
+      let msg;
+      if (today && h < today[0]) msg = 'Closed — lanterns go up at 17:00 tonight';
+      else if (day === 0 || (day >= 2 && day <= 6)) msg = 'Closed for the night — back tomorrow at 17:00';
+      else msg = 'Dark tonight — the grill rests on Mondays';
+      openText.textContent = msg;
+    }
+    const row = document.querySelector('.hours-table tr[data-day="' + day + '"]');
+    if (row) row.classList.add('today');
+  }
+
+  /* ---------- reserve — demo form ---------- */
+  const form = document.getElementById('resForm');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = form.querySelector('#rName'), email = form.querySelector('#rEmail');
+      if (!name.checkValidity()) { name.reportValidity(); return; }
+      if (!email.checkValidity()) { email.reportValidity(); return; }
+      form.innerHTML =
+        '<div class="reserve-done"><strong>Noted, ' + name.value.replace(/[<>&]/g, '') + '.</strong>' +
+        '<span>demo only — nothing was sent. a real izakaya would text you back between heats of the grill.</span></div>';
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+---
+import '../styles/global.css';
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+
+const title = 'How Yugen was built — Parable build guide';
+const description =
+  'Build notes for Yugen: the noren curtain parallax, the SVG bowl-builder, an honest reduced-motion story, and shipping an Astro site to GitHub Pages from /docs.';
+
+/* Code excerpts are kept as strings so Astro's template braces stay out of the way.
+   Both are lifted verbatim from the shipped site. */
+const norenCode = `const drift = () => {
+  ticking = false;
+  const heroH = hero ? hero.offsetHeight : innerHeight;
+  const y = clamp(scrollY, 0, heroH);
+  for (const p of panels) {
+    const depth = +p.dataset.depth;   // how deep in the doorway this panel hangs
+    const part  = +p.dataset.part;    // negative parts left, positive parts right
+    const tx  = part * y * 0.24;      // the curtain opens...
+    const ty  = -y * depth;           // ...and lifts, each panel at its own rate
+    const rot = part * Math.min(y * 0.005, 2);
+    p.style.transform =
+      'translate3d(' + tx + 'px,' + ty + 'px,0) rotate(' + rot + 'deg)';
+  }
+  noren.style.opacity = String(1 - (y / heroH) * 0.55);
+};
+addEventListener('scroll', () => {
+  if (!ticking) { ticking = true; requestAnimationFrame(drift); }
+}, { passive: true });`;
+
+const bowlCode = `const build = () => {
+  let total = 0, kcal = 0;
+  const names = [];
+  bowlForm.querySelectorAll('input').forEach((inp) => {
+    const layer = document.getElementById(inp.dataset.layer);
+    if (inp.checked) {
+      total += +inp.dataset.price;
+      kcal  += +inp.dataset.kcal;
+      names.push(inp.dataset.name);
+      if (layer) layer.classList.add('on');   // the ingredient lands
+    } else if (layer) {
+      layer.classList.remove('on');
+    }
+  });
+  priceEl.textContent = '$' + total.toFixed(2);
+};`;
+
+const shipCode = `// astro.config.mjs
+export default defineConfig({
+  site: 'https://bswxyz.github.io',
+  base: '/yugen',
+  outDir: './docs',   // Pages serves main + /docs — no Actions needed
+});`;
+---
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script is:inline>
+  document.documentElement.classList.add('js');
+  try { var t = localStorage.getItem('yugen-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="theme-color" content="#14100e" />
+<meta name="color-scheme" content="dark light" />
+<link rel="icon" href={`data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 3 q9 4 9 11 q0 8 -9 11 q-9 -3 -9 -11 q0 -7 9 -11 Z' fill='%23e0592e'/%3E%3C/svg%3E`} />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Karla:ital,wght@0,300..800;1,400..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+<div class="washi" aria-hidden="true"></div>
+<a class="skip" href="#doc">Skip to content</a>
+
+<main class="doc" id="doc">
+  <a class="doc-back" href={base}>← Back to Yugen</a>
+  <p class="eyebrow">[ Parable build guide ]</p>
+  <h1>How Yugen was built</h1>
+  <p class="doc-lede">An izakaya you enter, not scroll past. The signature is a
+    <strong>noren curtain that parts as you scroll</strong> — four fabric panels at different
+    parallax depths, split like a doorway curtain — and a <strong>shime bowl that assembles
+    itself</strong> from named SVG layers as you pick what goes in it.</p>
+
+  <div class="tag-row">
+    <span>Astro 5 · zero client framework</span><span>all art inline SVG</span>
+    <span>Shippori Mincho / Karla / Space Mono</span><span>light + dark</span><span>reduced-motion honest</span>
+  </div>
+
+  <h2>The idea</h2>
+  <p>Yūgen (幽玄) names the beauty of what's partly hidden — exactly what a noren does to a doorway.
+    So the site makes you do what the restaurant makes you do: <em>push through the curtain.</em>
+    The hero hangs four indigo fabric panels off a rod. Scroll, and they part sideways, lift at
+    different depths, and swing a couple of degrees — the page walks you into the room. The house
+    crest is split across the two centre panels, so the act of scrolling literally opens the mon.</p>
+  <p>Below the curtain, the room keeps the same rules: everything you see — the bowl, the alley,
+    the lanterns, the shelf, the cat — is inline SVG in the site's own ink. No photography,
+    no image requests, nothing that couldn't ship in a single HTML file.</p>
+
+  <h2>The stack — why Astro</h2>
+  <ul>
+    <li><strong>Content is data.</strong> The menu's fifteen plates, the bowl's thirteen
+      ingredients, and the weekly hours are typed arrays in <code>index.astro</code>'s frontmatter,
+      rendered to plain HTML at build time. Changing the menu is editing a list, not markup.</li>
+    <li><strong>Components without a runtime.</strong> <code>Bowl.astro</code> and
+      <code>RoomScene.astro</code> are author-time components — they cost nothing in the shipped
+      bundle. The only JavaScript on the page is one inline script: theme, curtain, reveals,
+      bowl, clock, demo form.</li>
+    <li><strong>The type does the atmosphere.</strong> Shippori Mincho is a Japanese-designed
+      Mincho serif — the brushy contrast carries the lantern-light mood. Karla stays warm and
+      plainspoken for body copy; Space Mono runs the ledger: prices, kcal, hours, captions.</li>
+  </ul>
+
+  <h2>Signature technique #1 — the noren parallax</h2>
+  <p>Each panel is a stretched SVG of fabric (a gradient, a weave pattern, a wavy hem, a dashed
+    stitch line) with two data attributes: <code>data-depth</code> for how fast it rises, and
+    <code>data-part</code> for which way and how hard it swings open. One rAF-throttled scroll
+    handler does the walking:</p>
+  <pre><code>{norenCode}</code></pre>
+  <p>Three nested wrappers keep the transforms from fighting: the outer <code>.panel</code> belongs
+    to the scroll handler, a middle <code>.panel-open</code> runs the load-in (the curtain starts
+    drawn together and parts on a 1.4s <code>--ease-noren</code> curve), and the inner
+    <code>.panel-cloth</code> carries an idle CSS sway — a draft through the doorway — on
+    desynchronised 7–8s loops.</p>
+
+  <h2>Signature technique #2 — the bowl that builds itself</h2>
+  <p>Every ingredient in the shime bowl is a named SVG group — <code>#l-base-udon</code>,
+    <code>#l-top-egg</code>, and so on — hidden by default and revealed with an <code>.on</code>
+    class that lands it with a small overshoot (<code>--ease-pop</code>). The form inputs carry
+    price, kcal, and their layer's id, so the whole builder is one loop:</p>
+  <pre><code>{bowlCode}</code></pre>
+  <p>The controls are native radios and checkboxes styled as cards — keyboard and screen-reader
+    behaviour comes free — and the running total sits in an <code>aria-live</code> region. The
+    default bowl ships pre-assembled in the HTML, so with JavaScript off you still see dinner,
+    not an empty dish.</p>
+
+  <h2>Details that matter</h2>
+  <ul>
+    <li><strong>Reduced motion is a real design, not an afterthought.</strong> Under
+      <code>prefers-reduced-motion</code> the curtain hangs still and parted, the sway and steam
+      stop at one honest frame, ingredients appear instantly, counters print their final number,
+      and the "open now" lantern dot stops pulsing.</li>
+    <li><strong>Nothing hides without JavaScript.</strong> Reveals and the hero's clipped-line rise
+      are gated behind a <code>.js</code> class set synchronously in <code>&lt;head&gt;</code>.
+      No script, no blank page.</li>
+    <li><strong>Both rooms, one switch.</strong> Dark is the room at night; light is the washi menu
+      before service. Every colour is a token on <code>:root[data-theme]</code>, persisted to
+      <code>localStorage("yugen-theme")</code> and bootstrapped inline before first paint — no flash.</li>
+    <li><strong>The clock knows the hours.</strong> A tiny weekly table drives the "open now" pill
+      and highlights today's row — closed Mondays, because the grill rests.</li>
+    <li><strong>Zero image requests.</strong> The washi grain is one inline
+      <code>feTurbulence</code> data-URI; everything else is SVG riding <code>currentColor</code>,
+      so the art re-inks itself when the theme flips.</li>
+  </ul>
+
+  <div class="callout"><p>The reservation form is a demo — it validates and confirms in place but
+    sends nothing. Wire it to a real endpoint (Formspree, a serverless function, the counter's
+    phone) before promising anyone a seat.</p></div>
+
+  <h2>Ship it on GitHub Pages</h2>
+  <p>The whole trick is three lines of config: build into <code>./docs</code> and let Pages serve
+    the main branch. Every internal link goes through <code>import.meta.env.BASE_URL</code>, so the
+    site works at <code>/yugen/</code> without a single hardcoded path.</p>
+  <pre><code>{shipCode}</code></pre>
+  <pre><code>npm run build   # emits ./docs
+git push        # Pages: main branch, /docs folder</code></pre>
+
+  <a class="doc-back doc-back-end" href={base}>← Back to Yugen</a>
+</main>
+
+<footer class="footer">
+  <div class="wrap foot-bottom">
+    <span>© 2026 Yugen — a design-showcase concept, not a real izakaya.</span>
+    <span>Designed &amp; built by Parable · <a href={`${base}guide/`}>How this was built →</a></span>
+  </div>
+</footer>
+
+<style>
+  .doc { position: relative; z-index: 1; width: min(100% - 2.6rem, 820px); margin: 2.4rem auto 5rem; }
+  .doc-back {
+    display: inline-flex; align-items: center; gap: .4rem; color: var(--dim);
+    text-decoration: none; font-size: .88rem; margin-bottom: 1.8rem;
+  }
+  .doc-back:hover { color: var(--ink); }
+  .doc-back-end { margin-top: 2.8rem; }
+  .doc h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); margin: .4rem 0 .5rem; }
+  .doc-lede { color: var(--dim); font-size: clamp(1rem, 1.5vw, 1.15rem); margin: 0 0 2rem; }
+  .doc-lede strong, .doc p strong { color: var(--ink); font-weight: 700; }
+  .doc h2 { font-size: clamp(1.4rem, 3vw, 1.9rem); margin: 2.8rem 0 .6rem; }
+  .doc p { color: var(--dim); margin: .7rem 0; }
+  .doc ul { color: var(--dim); padding-left: 1.15rem; margin: .7rem 0; }
+  .doc li { margin: .45rem 0; }
+  .doc li strong { color: var(--ink); }
+  .doc em { color: var(--persimmon-2); }
+  pre {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    padding: 1rem 1.2rem; overflow-x: auto; margin: 1.1rem 0;
+  }
+  code { font-family: var(--font-m); font-size: .8rem; color: var(--accent); }
+  pre code { color: var(--ink); line-height: 1.65; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.4rem 0 0; }
+  .tag-row span {
+    font-family: var(--font-m); font-size: .7rem; padding: .32rem .65rem;
+    border: 1px solid var(--line); border-radius: 999px; color: var(--dim);
+  }
+  .callout {
+    border-left: 3px solid var(--persimmon-2);
+    background: color-mix(in oklab, var(--persimmon) 7%, transparent);
+    padding: .9rem 1.1rem; border-radius: 0 12px 12px 0; margin: 1.6rem 0;
+  }
+  .callout p { margin: 0; color: var(--ink); }
+</style>
+</body>
+</html>

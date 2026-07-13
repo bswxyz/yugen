@@ -1,0 +1,186 @@
+---
+/*
+  The room — four ink-line scenes, all inline SVG.
+  Linework rides currentColor so it flips with the theme;
+  lanterns and embers stay persimmon in both.
+*/
+interface Props { kind: 'alley' | 'counter' | 'lanterns' | 'shelf'; label: string; }
+const { kind, label } = Astro.props;
+---
+{kind === 'alley' && (
+<svg viewBox="0 0 320 220" role="img" aria-label={label}>
+  <defs>
+    <radialGradient id="glow-alley" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="var(--persimmon-2)" stop-opacity=".4" />
+      <stop offset="1" stop-color="var(--persimmon-2)" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <path d="M14 196 H 306" opacity=".55" />
+    <path d="M40 196 V 26 M 66 196 V 26" opacity=".4" />
+    <path d="M254 196 V 26 M 280 196 V 26" opacity=".4" />
+    <path d="M108 196 V 68 H 212 V 196" opacity=".7" />
+  </g>
+  <circle cx="250" cy="112" r="34" fill="url(#glow-alley)" />
+  <rect x="112" y="106" width="96" height="90" fill="url(#glow-alley)" />
+  <!-- mini noren in the doorway -->
+  <g>
+    <path d="M112 70 h30 v32 c -10 4 -20 -2 -30 2 z" fill="var(--noren-1)" />
+    <path d="M145 70 h30 v34 c -10 3 -20 -3 -30 1 z" fill="var(--noren-2)" />
+    <path d="M178 70 h30 v31 c -10 5 -20 -1 -30 3 z" fill="var(--noren-1)" />
+    <path d="M172 78 a 14 14 0 1 0 3 18" fill="none" stroke="#f2ede2" stroke-width="2.4" stroke-linecap="round" opacity=".85" />
+  </g>
+  <!-- lantern by the door -->
+  <g>
+    <path d="M228 82 h 28 M 242 82 v 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".6" />
+    <ellipse cx="242" cy="112" rx="14" ry="19" fill="var(--persimmon-2)" opacity=".9" />
+    <path d="M230 106 q 12 -5 24 0 M229 118 q 13 5 26 0" fill="none" stroke="#7c2f12" stroke-width="1.4" opacity=".6" />
+    <rect x="236" y="91" width="12" height="5" rx="2" fill="currentColor" opacity=".55" />
+    <rect x="236" y="129" width="12" height="5" rx="2" fill="currentColor" opacity=".55" />
+  </g>
+  <!-- sign board -->
+  <g fill="none" stroke="currentColor" stroke-width="2" opacity=".55">
+    <rect x="76" y="84" width="18" height="66" rx="3" />
+    <path d="M85 94 v8 M85 112 v8 M85 130 v8" stroke-linecap="round" />
+  </g>
+  <!-- the cat -->
+  <path d="M88 196 c -2 -14 4 -24 12 -24 c 3 -6 10 -6 12 0 c 8 2 12 12 10 24 z
+           M 86 194 c -8 -2 -12 -10 -8 -16" fill="currentColor" opacity=".85" />
+  <g fill="currentColor" opacity=".85">
+    <path d="M96 174 l -2 -7 5 3 z M 112 174 l 2 -7 -5 3 z" />
+  </g>
+  <g fill="currentColor" opacity=".3">
+    <ellipse cx="150" cy="204" rx="8" ry="2.4" /><ellipse cx="196" cy="208" rx="6" ry="2" /><ellipse cx="66" cy="206" rx="7" ry="2.2" />
+  </g>
+</svg>
+)}
+
+{kind === 'counter' && (
+<svg viewBox="0 0 320 220" role="img" aria-label={label}>
+  <defs>
+    <radialGradient id="glow-counter" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="var(--persimmon-2)" stop-opacity=".35" />
+      <stop offset="1" stop-color="var(--persimmon-2)" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <!-- pendant light -->
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".6">
+    <path d="M160 8 v 30" />
+    <path d="M142 56 q 18 -22 36 0 z" fill="currentColor" opacity=".5" />
+  </g>
+  <ellipse cx="160" cy="86" rx="52" ry="26" fill="url(#glow-counter)" />
+  <!-- back shelf -->
+  <g fill="none" stroke="currentColor" stroke-width="2" opacity=".35" stroke-linecap="round">
+    <path d="M24 62 H 120 M 220 62 H 300" />
+    <path d="M40 62 v -18 h 10 v 18 M 62 62 v -14 h 8 v 14 M 84 62 v -20 h 9 v 20" />
+    <path d="M240 62 v -16 h 9 v 16 M 262 62 v -20 h 10 v 20" />
+  </g>
+  <!-- counter -->
+  <path d="M16 148 H 304" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" />
+  <g fill="none" stroke="currentColor" stroke-width="2" opacity=".35" stroke-linecap="round">
+    <path d="M28 148 V 204 M 292 148 V 204 M 28 178 H 292" />
+  </g>
+  <!-- konro grill with skewers -->
+  <g>
+    <rect x="46" y="124" width="72" height="22" rx="5" fill="none" stroke="currentColor" stroke-width="2.4" />
+    <circle cx="66" cy="136" r="4" fill="var(--persimmon-2)" opacity=".95" />
+    <circle cx="82" cy="138" r="3.4" fill="var(--persimmon-2)" opacity=".75" />
+    <circle cx="98" cy="136" r="4" fill="var(--persimmon-2)" opacity=".9" />
+    <path d="M40 118 L 124 108" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".8" />
+    <g fill="currentColor" opacity=".8">
+      <ellipse cx="66" cy="115" rx="7" ry="4.4" transform="rotate(-7 66 115)" />
+      <ellipse cx="86" cy="113" rx="7" ry="4.4" transform="rotate(-7 86 113)" />
+      <ellipse cx="106" cy="110" rx="7" ry="4.4" transform="rotate(-7 106 110)" />
+    </g>
+    <path d="M104 100 c -4 -10 6 -14 2 -24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".3" />
+  </g>
+  <!-- tokkuri + two ochoko -->
+  <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+    <path d="M206 148 c -8 -6 -8 -22 0 -30 c -4 -6 -3 -12 2 -14 h 8 c 5 2 6 8 2 14 c 8 8 8 24 0 30 z"
+      fill="var(--indigo-deep)" fill-opacity=".3" />
+    <path d="M238 148 v -8 q 8 -3 16 0 v 8 z" fill="none" />
+    <path d="M262 148 v -8 q 8 -3 16 0 v 8 z" fill="none" />
+  </g>
+  <path d="M204 122 q 8 -4 16 0" fill="none" stroke="#f2ede2" stroke-width="1.6" opacity=".3" />
+</svg>
+)}
+
+{kind === 'lanterns' && (
+<svg viewBox="0 0 320 220" role="img" aria-label={label}>
+  <defs>
+    <radialGradient id="glow-lan" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="var(--persimmon-2)" stop-opacity=".38" />
+      <stop offset="1" stop-color="var(--persimmon-2)" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <path d="M12 18 H 308" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" opacity=".6" />
+  {[
+    { x: 70,  drop: 22, h: 62, mon: false },
+    { x: 160, drop: 44, h: 70, mon: true },
+    { x: 250, drop: 30, h: 58, mon: false },
+  ].map((l) => (
+    <g>
+      <path d={`M${l.x} 18 v ${l.drop}`} stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".55" fill="none" />
+      <ellipse cx={l.x} cy={18 + l.drop + l.h / 2 + 6} rx={l.h * .78} ry={l.h * .72} fill="url(#glow-lan)" />
+      <rect x={l.x - 12} y={18 + l.drop} width="24" height="7" rx="2.5" fill="currentColor" opacity=".55" />
+      <path d={`M${l.x - 23} ${18 + l.drop + 10} q 23 -10 46 0 v ${l.h - 18} q -23 10 -46 0 z`}
+        fill="var(--persimmon-2)" opacity=".92" />
+      <g fill="none" stroke="#7c2f12" stroke-width="1.4" opacity=".55">
+        <path d={`M${l.x - 23} ${18 + l.drop + 18} q 23 -7 46 0`} />
+        <path d={`M${l.x - 24} ${18 + l.drop + (l.h - 18) / 2 + 12} q 24 0 48 0`} />
+        <path d={`M${l.x - 23} ${18 + l.drop + l.h - 14} q 23 7 46 0`} />
+      </g>
+      {l.mon && (
+        <path d={`M${l.x + 10} ${18 + l.drop + 22} a 13 13 0 1 0 3 16`}
+          fill="none" stroke="#f2ede2" stroke-width="2.6" stroke-linecap="round" opacity=".95" />
+      )}
+      <rect x={l.x - 10} y={18 + l.drop + l.h - 6} width="20" height="6" rx="2.5" fill="currentColor" opacity=".55" />
+    </g>
+  ))}
+  <path d="M18 206 H 302" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".25" />
+</svg>
+)}
+
+{kind === 'shelf' && (
+<svg viewBox="0 0 320 220" role="img" aria-label={label}>
+  <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" opacity=".65">
+    <path d="M24 96 H 296 M 24 176 H 296" />
+    <path d="M36 96 v 10 M 284 96 v 10 M 36 176 v 10 M 284 176 v 10" opacity=".6" />
+  </g>
+  <!-- top shelf: issho-bin bottles + tokkuri -->
+  <g stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+    <path d="M54 96 v -40 q 0 -6 6 -8 v -8 h 8 v 8 q 6 2 6 8 v 40 z" fill="var(--indigo-deep)" fill-opacity=".35" />
+    <rect x="57" y="66" width="14" height="18" rx="1.5" fill="#f2ede2" stroke="none" opacity=".9" />
+    <path d="M60 71 h 8 M 60 76 h 8" stroke="currentColor" stroke-width="1.4" opacity=".6" />
+    <path d="M96 96 v -36 q 0 -6 6 -8 v -6 h 7 v 6 q 6 2 6 8 v 36 z" fill="var(--persimmon-2)" fill-opacity=".3" />
+    <rect x="99" y="70" width="13" height="15" rx="1.5" fill="#f2ede2" stroke="none" opacity=".9" />
+    <path d="M102 75 h 7 M 102 79 h 7" stroke="currentColor" stroke-width="1.4" opacity=".6" />
+    <path d="M138 96 c -7 -5 -7 -18 0 -24 c -3 -5 -2 -9 2 -11 h 7 c 4 2 5 6 2 11 c 7 6 7 19 0 24 z" fill="none" />
+    <path d="M172 96 c -7 -5 -7 -18 0 -24 c -3 -5 -2 -9 2 -11 h 7 c 4 2 5 6 2 11 c 7 6 7 19 0 24 z" fill="var(--indigo-deep)" fill-opacity=".25" />
+  </g>
+  <!-- masu stack -->
+  <g fill="none" stroke="currentColor" stroke-width="2" opacity=".7">
+    <rect x="216" y="76" width="26" height="20" />
+    <rect x="222" y="56" width="26" height="20" />
+    <path d="M216 86 h 26 M 222 66 h 26" opacity=".5" />
+  </g>
+  <!-- hanging tag -->
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".6">
+    <path d="M268 96 v 14" />
+    <rect x="258" y="110" width="20" height="34" rx="3" />
+    <path d="M264 118 h 8 M 264 126 h 8 M 264 134 h 8" />
+  </g>
+  <!-- bottom shelf: cups + daruma -->
+  <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity=".8">
+    <path d="M52 176 v -10 q 9 -4 18 0 v 10 z M 84 176 v -10 q 9 -4 18 0 v 10 z M 116 176 v -10 q 9 -4 18 0 v 10 z" />
+  </g>
+  <g>
+    <path d="M196 176 c -14 -2 -18 -26 0 -32 c 18 6 14 30 0 32 z" fill="var(--persimmon-2)" opacity=".9" />
+    <circle cx="190" cy="158" r="2" fill="#1a1512" /><circle cx="202" cy="158" r="2" fill="#1a1512" />
+    <path d="M190 166 q 6 3 12 0" fill="none" stroke="#1a1512" stroke-width="1.6" stroke-linecap="round" />
+  </g>
+  <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity=".8">
+    <path d="M232 176 c -6 -4 -6 -16 0 -20 c -2 -4 -1 -7 2 -9 h 6 c 3 2 4 5 2 9 c 6 4 6 16 0 20 z" />
+  </g>
+</svg>
+)}

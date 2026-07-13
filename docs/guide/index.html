@@ -1,0 +1,87 @@
+<!DOCTYPE html><html lang="en" data-theme="dark" data-astro-cid-5tcejxga> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>
+  document.documentElement.classList.add('js');
+  try { var t = localStorage.getItem('yugen-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script><title>How Yugen was built — Parable build guide</title><meta name="description" content="Build notes for Yugen: the noren curtain parallax, the SVG bowl-builder, an honest reduced-motion story, and shipping an Astro site to GitHub Pages from /docs."><meta name="theme-color" content="#14100e"><meta name="color-scheme" content="dark light"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 3 q9 4 9 11 q0 8 -9 11 q-9 -3 -9 -11 q0 -7 9 -11 Z' fill='%23e0592e'/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Karla:ital,wght@0,300..800;1,400..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/yugen/_astro/guide.CIKh89yR.css">
+<style>.doc[data-astro-cid-5tcejxga]{position:relative;z-index:1;width:min(100% - 2.6rem,820px);margin:2.4rem auto 5rem}.doc-back[data-astro-cid-5tcejxga]{display:inline-flex;align-items:center;gap:.4rem;color:var(--dim);text-decoration:none;font-size:.88rem;margin-bottom:1.8rem}.doc-back[data-astro-cid-5tcejxga]:hover{color:var(--ink)}.doc-back-end[data-astro-cid-5tcejxga]{margin-top:2.8rem}.doc[data-astro-cid-5tcejxga] h1[data-astro-cid-5tcejxga]{font-size:clamp(2.2rem,5vw,3.4rem);margin:.4rem 0 .5rem}.doc-lede[data-astro-cid-5tcejxga]{color:var(--dim);font-size:clamp(1rem,1.5vw,1.15rem);margin:0 0 2rem}.doc-lede[data-astro-cid-5tcejxga] strong[data-astro-cid-5tcejxga],.doc[data-astro-cid-5tcejxga] p[data-astro-cid-5tcejxga] strong[data-astro-cid-5tcejxga]{color:var(--ink);font-weight:700}.doc[data-astro-cid-5tcejxga] h2[data-astro-cid-5tcejxga]{font-size:clamp(1.4rem,3vw,1.9rem);margin:2.8rem 0 .6rem}.doc[data-astro-cid-5tcejxga] p[data-astro-cid-5tcejxga]{color:var(--dim);margin:.7rem 0}.doc[data-astro-cid-5tcejxga] ul[data-astro-cid-5tcejxga]{color:var(--dim);padding-left:1.15rem;margin:.7rem 0}.doc[data-astro-cid-5tcejxga] li[data-astro-cid-5tcejxga]{margin:.45rem 0}.doc[data-astro-cid-5tcejxga] li[data-astro-cid-5tcejxga] strong[data-astro-cid-5tcejxga]{color:var(--ink)}.doc[data-astro-cid-5tcejxga] em[data-astro-cid-5tcejxga]{color:var(--persimmon-2)}pre[data-astro-cid-5tcejxga]{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1rem 1.2rem;overflow-x:auto;margin:1.1rem 0}code[data-astro-cid-5tcejxga]{font-family:var(--font-m);font-size:.8rem;color:var(--accent)}pre[data-astro-cid-5tcejxga] code[data-astro-cid-5tcejxga]{color:var(--ink);line-height:1.65}.tag-row[data-astro-cid-5tcejxga]{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.4rem 0 0}.tag-row[data-astro-cid-5tcejxga] span[data-astro-cid-5tcejxga]{font-family:var(--font-m);font-size:.7rem;padding:.32rem .65rem;border:1px solid var(--line);border-radius:999px;color:var(--dim)}.callout[data-astro-cid-5tcejxga]{border-left:3px solid var(--persimmon-2);background:color-mix(in oklab,var(--persimmon) 7%,transparent);padding:.9rem 1.1rem;border-radius:0 12px 12px 0;margin:1.6rem 0}.callout[data-astro-cid-5tcejxga] p[data-astro-cid-5tcejxga]{margin:0;color:var(--ink)}
+</style></head> <body data-astro-cid-5tcejxga> <div class="washi" aria-hidden="true" data-astro-cid-5tcejxga></div> <a class="skip" href="#doc" data-astro-cid-5tcejxga>Skip to content</a> <main class="doc" id="doc" data-astro-cid-5tcejxga> <a class="doc-back" href="/yugen/" data-astro-cid-5tcejxga>← Back to Yugen</a> <p class="eyebrow" data-astro-cid-5tcejxga>[ Parable build guide ]</p> <h1 data-astro-cid-5tcejxga>How Yugen was built</h1> <p class="doc-lede" data-astro-cid-5tcejxga>An izakaya you enter, not scroll past. The signature is a
+<strong data-astro-cid-5tcejxga>noren curtain that parts as you scroll</strong> — four fabric panels at different
+    parallax depths, split like a doorway curtain — and a <strong data-astro-cid-5tcejxga>shime bowl that assembles
+    itself</strong> from named SVG layers as you pick what goes in it.</p> <div class="tag-row" data-astro-cid-5tcejxga> <span data-astro-cid-5tcejxga>Astro 5 · zero client framework</span><span data-astro-cid-5tcejxga>all art inline SVG</span> <span data-astro-cid-5tcejxga>Shippori Mincho / Karla / Space Mono</span><span data-astro-cid-5tcejxga>light + dark</span><span data-astro-cid-5tcejxga>reduced-motion honest</span> </div> <h2 data-astro-cid-5tcejxga>The idea</h2> <p data-astro-cid-5tcejxga>Yūgen (幽玄) names the beauty of what's partly hidden — exactly what a noren does to a doorway.
+    So the site makes you do what the restaurant makes you do: <em data-astro-cid-5tcejxga>push through the curtain.</em>
+The hero hangs four indigo fabric panels off a rod. Scroll, and they part sideways, lift at
+    different depths, and swing a couple of degrees — the page walks you into the room. The house
+    crest is split across the two centre panels, so the act of scrolling literally opens the mon.</p> <p data-astro-cid-5tcejxga>Below the curtain, the room keeps the same rules: everything you see — the bowl, the alley,
+    the lanterns, the shelf, the cat — is inline SVG in the site's own ink. No photography,
+    no image requests, nothing that couldn't ship in a single HTML file.</p> <h2 data-astro-cid-5tcejxga>The stack — why Astro</h2> <ul data-astro-cid-5tcejxga> <li data-astro-cid-5tcejxga><strong data-astro-cid-5tcejxga>Content is data.</strong> The menu's fifteen plates, the bowl's thirteen
+      ingredients, and the weekly hours are typed arrays in <code data-astro-cid-5tcejxga>index.astro</code>'s frontmatter,
+      rendered to plain HTML at build time. Changing the menu is editing a list, not markup.</li> <li data-astro-cid-5tcejxga><strong data-astro-cid-5tcejxga>Components without a runtime.</strong> <code data-astro-cid-5tcejxga>Bowl.astro</code> and
+<code data-astro-cid-5tcejxga>RoomScene.astro</code> are author-time components — they cost nothing in the shipped
+      bundle. The only JavaScript on the page is one inline script: theme, curtain, reveals,
+      bowl, clock, demo form.</li> <li data-astro-cid-5tcejxga><strong data-astro-cid-5tcejxga>The type does the atmosphere.</strong> Shippori Mincho is a Japanese-designed
+      Mincho serif — the brushy contrast carries the lantern-light mood. Karla stays warm and
+      plainspoken for body copy; Space Mono runs the ledger: prices, kcal, hours, captions.</li> </ul> <h2 data-astro-cid-5tcejxga>Signature technique #1 — the noren parallax</h2> <p data-astro-cid-5tcejxga>Each panel is a stretched SVG of fabric (a gradient, a weave pattern, a wavy hem, a dashed
+    stitch line) with two data attributes: <code data-astro-cid-5tcejxga>data-depth</code> for how fast it rises, and
+<code data-astro-cid-5tcejxga>data-part</code> for which way and how hard it swings open. One rAF-throttled scroll
+    handler does the walking:</p> <pre data-astro-cid-5tcejxga><code data-astro-cid-5tcejxga>const drift = () =&gt; {
+  ticking = false;
+  const heroH = hero ? hero.offsetHeight : innerHeight;
+  const y = clamp(scrollY, 0, heroH);
+  for (const p of panels) {
+    const depth = +p.dataset.depth;   // how deep in the doorway this panel hangs
+    const part  = +p.dataset.part;    // negative parts left, positive parts right
+    const tx  = part * y * 0.24;      // the curtain opens...
+    const ty  = -y * depth;           // ...and lifts, each panel at its own rate
+    const rot = part * Math.min(y * 0.005, 2);
+    p.style.transform =
+      &#39;translate3d(&#39; + tx + &#39;px,&#39; + ty + &#39;px,0) rotate(&#39; + rot + &#39;deg)&#39;;
+  }
+  noren.style.opacity = String(1 - (y / heroH) * 0.55);
+};
+addEventListener(&#39;scroll&#39;, () =&gt; {
+  if (!ticking) { ticking = true; requestAnimationFrame(drift); }
+}, { passive: true });</code></pre> <p data-astro-cid-5tcejxga>Three nested wrappers keep the transforms from fighting: the outer <code data-astro-cid-5tcejxga>.panel</code> belongs
+    to the scroll handler, a middle <code data-astro-cid-5tcejxga>.panel-open</code> runs the load-in (the curtain starts
+    drawn together and parts on a 1.4s <code data-astro-cid-5tcejxga>--ease-noren</code> curve), and the inner
+<code data-astro-cid-5tcejxga>.panel-cloth</code> carries an idle CSS sway — a draft through the doorway — on
+    desynchronised 7–8s loops.</p> <h2 data-astro-cid-5tcejxga>Signature technique #2 — the bowl that builds itself</h2> <p data-astro-cid-5tcejxga>Every ingredient in the shime bowl is a named SVG group — <code data-astro-cid-5tcejxga>#l-base-udon</code>,
+<code data-astro-cid-5tcejxga>#l-top-egg</code>, and so on — hidden by default and revealed with an <code data-astro-cid-5tcejxga>.on</code>
+class that lands it with a small overshoot (<code data-astro-cid-5tcejxga>--ease-pop</code>). The form inputs carry
+    price, kcal, and their layer's id, so the whole builder is one loop:</p> <pre data-astro-cid-5tcejxga><code data-astro-cid-5tcejxga>const build = () =&gt; {
+  let total = 0, kcal = 0;
+  const names = [];
+  bowlForm.querySelectorAll(&#39;input&#39;).forEach((inp) =&gt; {
+    const layer = document.getElementById(inp.dataset.layer);
+    if (inp.checked) {
+      total += +inp.dataset.price;
+      kcal  += +inp.dataset.kcal;
+      names.push(inp.dataset.name);
+      if (layer) layer.classList.add(&#39;on&#39;);   // the ingredient lands
+    } else if (layer) {
+      layer.classList.remove(&#39;on&#39;);
+    }
+  });
+  priceEl.textContent = &#39;$&#39; + total.toFixed(2);
+};</code></pre> <p data-astro-cid-5tcejxga>The controls are native radios and checkboxes styled as cards — keyboard and screen-reader
+    behaviour comes free — and the running total sits in an <code data-astro-cid-5tcejxga>aria-live</code> region. The
+    default bowl ships pre-assembled in the HTML, so with JavaScript off you still see dinner,
+    not an empty dish.</p> <h2 data-astro-cid-5tcejxga>Details that matter</h2> <ul data-astro-cid-5tcejxga> <li data-astro-cid-5tcejxga><strong data-astro-cid-5tcejxga>Reduced motion is a real design, not an afterthought.</strong> Under
+<code data-astro-cid-5tcejxga>prefers-reduced-motion</code> the curtain hangs still and parted, the sway and steam
+      stop at one honest frame, ingredients appear instantly, counters print their final number,
+      and the "open now" lantern dot stops pulsing.</li> <li data-astro-cid-5tcejxga><strong data-astro-cid-5tcejxga>Nothing hides without JavaScript.</strong> Reveals and the hero's clipped-line rise
+      are gated behind a <code data-astro-cid-5tcejxga>.js</code> class set synchronously in <code data-astro-cid-5tcejxga>&lt;head&gt;</code>.
+      No script, no blank page.</li> <li data-astro-cid-5tcejxga><strong data-astro-cid-5tcejxga>Both rooms, one switch.</strong> Dark is the room at night; light is the washi menu
+      before service. Every colour is a token on <code data-astro-cid-5tcejxga>:root[data-theme]</code>, persisted to
+<code data-astro-cid-5tcejxga>localStorage("yugen-theme")</code> and bootstrapped inline before first paint — no flash.</li> <li data-astro-cid-5tcejxga><strong data-astro-cid-5tcejxga>The clock knows the hours.</strong> A tiny weekly table drives the "open now" pill
+      and highlights today's row — closed Mondays, because the grill rests.</li> <li data-astro-cid-5tcejxga><strong data-astro-cid-5tcejxga>Zero image requests.</strong> The washi grain is one inline
+<code data-astro-cid-5tcejxga>feTurbulence</code> data-URI; everything else is SVG riding <code data-astro-cid-5tcejxga>currentColor</code>,
+      so the art re-inks itself when the theme flips.</li> </ul> <div class="callout" data-astro-cid-5tcejxga><p data-astro-cid-5tcejxga>The reservation form is a demo — it validates and confirms in place but
+    sends nothing. Wire it to a real endpoint (Formspree, a serverless function, the counter's
+    phone) before promising anyone a seat.</p></div> <h2 data-astro-cid-5tcejxga>Ship it on GitHub Pages</h2> <p data-astro-cid-5tcejxga>The whole trick is three lines of config: build into <code data-astro-cid-5tcejxga>./docs</code> and let Pages serve
+    the main branch. Every internal link goes through <code data-astro-cid-5tcejxga>import.meta.env.BASE_URL</code>, so the
+    site works at <code data-astro-cid-5tcejxga>/yugen/</code> without a single hardcoded path.</p> <pre data-astro-cid-5tcejxga><code data-astro-cid-5tcejxga>// astro.config.mjs
+export default defineConfig({
+  site: &#39;https://bswxyz.github.io&#39;,
+  base: &#39;/yugen&#39;,
+  outDir: &#39;./docs&#39;,   // Pages serves main + /docs — no Actions needed
+});</code></pre> <pre data-astro-cid-5tcejxga><code data-astro-cid-5tcejxga>npm run build   # emits ./docs
+git push        # Pages: main branch, /docs folder</code></pre> <a class="doc-back doc-back-end" href="/yugen/" data-astro-cid-5tcejxga>← Back to Yugen</a> </main> <footer class="footer" data-astro-cid-5tcejxga> <div class="wrap foot-bottom" data-astro-cid-5tcejxga> <span data-astro-cid-5tcejxga>© 2026 Yugen — a design-showcase concept, not a real izakaya.</span> <span data-astro-cid-5tcejxga>Designed &amp; built by Parable · <a href="/yugen/guide/" data-astro-cid-5tcejxga>How this was built →</a></span> </div> </footer>  </body> </html>
