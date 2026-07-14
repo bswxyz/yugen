@@ -169,6 +169,7 @@ a { color: inherit; }
 /* ---------- section scaffolding ---------- */
 main { position: relative; z-index: 1; }
 section { position: relative; }
+section[id] { scroll-margin-top: 80px; }
 .sec-head { max-width: 64ch; margin-bottom: 2.8rem; }
 .kicker {
   font-family: var(--font-m); color: var(--persimmon-2); font-size: .74rem;

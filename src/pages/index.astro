@@ -558,8 +558,9 @@ const hours = [
       openNow.classList.add('is-closed');
       let msg;
       if (today && h < today[0]) msg = 'Closed — lanterns go up at 17:00 tonight';
-      else if (day === 0 || (day >= 2 && day <= 6)) msg = 'Closed for the night — back tomorrow at 17:00';
-      else msg = 'Dark tonight — the grill rests on Mondays';
+      else if (day === 1) msg = 'Dark tonight — the grill rests on Mondays';
+      else if (day === 0) msg = 'Closed for the night — dark Monday, back Tuesday at 17:00';
+      else msg = 'Closed for the night — back tomorrow at 17:00';
       openText.textContent = msg;
     }
     const row = document.querySelector('.hours-table tr[data-day="' + day + '"]');
