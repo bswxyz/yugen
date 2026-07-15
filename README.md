@@ -1,10 +1,42 @@
-# Yugen — izakaya · small plates & sake bar
+<!-- parable:beautified -->
+<div align="center">
+
+<h1>Yugen</h1>
+
+<p><strong>Izakaya at the end of the alley — indigo noren curtains part in parallax over a build-your-own-bowl.</strong></p>
+
+<p>
+  <a href="https://bswxyz.github.io/yugen/"><img alt="Live demo" src="https://img.shields.io/badge/demo-live-8b5cf6?style=flat-square&labelColor=1a1a1a"></a>
+  <img alt="Family" src="https://img.shields.io/badge/family-Parable-ec4899?style=flat-square&labelColor=1a1a1a">
+  <img alt="Stack" src="https://img.shields.io/badge/stack-Astro-f5a623?style=flat-square&labelColor=1a1a1a">
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-22c55e?style=flat-square&labelColor=1a1a1a"></a>
+</p>
+
+<p>
+  <a href="https://bswxyz.github.io/yugen/"><b>Live demo</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://bswxyz.github.io/yugen/guide/">Build notes</a>
+  &nbsp;·&nbsp;
+  <a href="https://parable-three.vercel.app/templates">More templates</a>
+</p>
+
+<a href="https://bswxyz.github.io/yugen/">
+  <img src=".github/preview.jpg" alt="Yugen — live preview" width="100%">
+</a>
+
+</div>
+
+**Use this template** — copy the source into a new project:
+
+```bash
+npx degit bswxyz/yugen my-app
+```
+
 
 A design-showcase website template by **Parable**: a fourteen-seat izakaya at the end of a
 fictional alley. Charcoal kushiyaki, cold sake, a bowl you build yourself — and a noren curtain
 you scroll through to get in.
 
-**Live:** https://bswxyz.github.io/yugen/ · **Build notes:** [/guide/](https://bswxyz.github.io/yugen/guide/)
 
 ## The concept
 
